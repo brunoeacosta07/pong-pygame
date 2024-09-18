@@ -1,0 +1,26 @@
+{
+     "label":
+     {
+         "colours":
+         {
+             "dark_bg": "#000000",
+             "normal_text": "#FFFFFF",
+             "disabled_text": "#888888",
+             "text_shadow": "#000000"
+         },
+         "font":
+         {
+             "regular_path": "fonts/aesymatt.ttf",
+             "name": "aesymatt",
+             "size": "36",
+             "bold": "0",
+             "italic": "0"
+         },
+         "misc":
+         {
+             "text_shadow": "1",
+             "text_shadow_size": "1",
+             "text_shadow_offset": "1,1"
+         }
+     }
+ }
