@@ -1,6 +1,14 @@
 import pygame_gui
-from menus.menu import Menu
+from menus.menu import Menu, check_user
 from utils.utils import *
+
+
+def check_credentials(username, password):
+    users = open_csv('resources/files/maestro-usuarios.csv')
+    for user in users:
+        if user['usuario'].lower() == username.lower() and user['clave'] == password:
+            return True
+    return False
 
 
 class LoginMenu(Menu):
@@ -72,4 +80,11 @@ class LoginMenu(Menu):
             self.error_message = "*Debe completar el campo de contraseña*"
         else:
             self.error_message = None
-            # TODO: Agregar logica de validacion de usuario
+            if check_user(username):
+                if check_credentials(username, password):
+                    print("Credenciales correctas")
+                else:
+                    self.error_message = "*contraseña incorrecta*"
+            else:
+                self.error_message = "*Usuario inexistente*"
+

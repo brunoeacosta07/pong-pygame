@@ -9,7 +9,7 @@ from utils.utils import WIDTH, HEIGHT, SPEED
 class Paddle(pygame.sprite.Sprite):
     def __init__(self, x):
         super().__init__()
-        self.image = utils.load_image("img/paddle.png")
+        self.image = utils.load_image("resources/img/paddle.png")
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = HEIGHT / 2

@@ -6,7 +6,7 @@ from utils.utils import WIDTH, HEIGHT, SPEED
 class Ball(pygame.sprite.Sprite):
     def __init__(self, initial_x=WIDTH / 2, initial_y=HEIGHT / 2):
         super().__init__()
-        self.image = utils.load_image("img/ball-1.png", True)
+        self.image = utils.load_image("resources/img/ball-1.png", True)
         # self.image = pygame.transform.scale(self.image, (70, 70))
         self.original_image = self.image
         self.rect = self.image.get_rect()

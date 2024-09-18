@@ -1,6 +1,14 @@
 import pygame_gui
-from menus.menu import Menu
+from menus.menu import Menu, check_user
 from utils.utils import *
+
+
+def create_user(name, username, password):
+    users = open_csv('resources/files/maestro-usuarios.csv')
+    user_code = str(users.count() + 1).zfill(3)
+    with open('resources/files/maestro-usuarios.csv', 'a', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow([user_code, name, username, password])
 
 
 class SignUpMenu(Menu):
@@ -98,4 +106,11 @@ class SignUpMenu(Menu):
             self.error_message = "*Debe completar el campo de confirmar contraseña*"
         else:
             self.error_message = None
-            # TODO: Agregar logica de validacion de usuario
+            if check_user(username):
+                self.error_message = "*El usuario ya existe*"
+            else:
+                if password == confirm_password:
+                    print("Usuario creado")
+                    create_user(name, username, password)
+                else:
+                    self.error_message = "*Las contraseñas no coinciden*"

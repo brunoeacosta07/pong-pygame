@@ -1,3 +1,5 @@
+import csv
+
 import pygame
 from pygame.locals import *
 
@@ -42,3 +44,10 @@ def menu_text_height(mid_h, order):
 
 def login_box_height(mid_h, order):
     return (mid_h - 200) + (MENU_TEXT_SIZE / 2 + (order * 70))
+
+
+def open_csv(file_path):
+    with open(file_path, 'r') as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+    return rows

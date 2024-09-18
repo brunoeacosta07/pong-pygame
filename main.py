@@ -15,7 +15,7 @@ if not pygame.font:
 def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Pygame Test")
-    background_image = utils.load_image('img/background_tenis.png')
+    background_image = utils.load_image('resources/img/background_tenis.png')
     background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
     ball = Ball()
     ball2 = Ball()

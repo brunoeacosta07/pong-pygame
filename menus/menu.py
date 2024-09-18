@@ -1,6 +1,14 @@
 from utils.utils import *
 
 
+def check_user(username):
+    users = open_csv('resources/files/maestro-usuarios.csv')
+    for user in users:
+        if user['usuario'].lower() == username.lower():
+            return True
+    return False
+
+
 class Menu:
     def __init__(self, game):
         self.game = game
@@ -16,4 +24,3 @@ class Menu:
         self.game.window.blit(self.game.display, (0, 0))
         pygame.display.update()
         self.game.reset_keys()
-
