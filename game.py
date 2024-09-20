@@ -1,4 +1,4 @@
-
+from menus.created_user import CreatedUser
 from menus.credits_menu import CreditsMenu
 from menus.login_menu import LoginMenu
 from menus.main_menu import MainMenu
@@ -17,6 +17,7 @@ class Game:
         self.main_menu = MainMenu(self)
         self.login = LoginMenu(self)
         self.signUp = SignUpMenu(self)
+        self.createdUser = CreatedUser(self)
         self.ranking = RankingMenu(self)
         self.credits = CreditsMenu(self)
         self.curr_menu = self.main_menu
