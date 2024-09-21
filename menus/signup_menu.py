@@ -5,9 +5,11 @@ from utils.utils import *
 
 def create_user(name, username, password):
     users = open_csv('resources/files/maestro-usuarios.csv')
-    user_code = str(users.count() + 1).zfill(3)
+    print(users)
+    user_code = str(len(users) + 1).zfill(3)
     with open('resources/files/maestro-usuarios.csv', 'a', newline='') as f:
         writer = csv.writer(f)
+        # f.write('\n')
         writer.writerow([user_code, name, username, password])
 
 
@@ -110,7 +112,9 @@ class SignUpMenu(Menu):
                 self.error_message = "*El usuario ya existe*"
             else:
                 if password == confirm_password:
-                    print("Usuario creado")
                     create_user(name, username, password)
+                    print("Usuario creado")
+                    self.game.curr_menu = self.game.createdUser
+                    self.run_display = False
                 else:
                     self.error_message = "*Las contraseñas no coinciden*"

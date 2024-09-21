@@ -54,6 +54,8 @@ class Game:
                 if self.curr_menu in (self.login, self.signUp, self.ranking):
                     self.curr_menu.manager.process_events(event)
                     self.curr_menu.check_input(event, self.clock.tick(60) / 1000)
+                elif self.curr_menu == self.createdUser:
+                    self.curr_menu.check_input()
 
     def reset_keys(self):
         self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.ESCAPE_KEY = False, False, False, False
@@ -71,6 +73,15 @@ class Game:
         pygame.font.init()
         font = pygame.font.Font(self.font_name, size)
         text_surface = font.render(text, True, WHITE)
+        text_rect = text_surface.get_rect()
+        text_rect.center = (x, y)
+        self.display.blit(text_surface, text_rect)
+        return text_rect
+
+    def draw_success_text(self, text, size, x, y):
+        pygame.font.init()
+        font = pygame.font.Font(self.font_name, size)
+        text_surface = font.render(text, True, GREEN)
         text_rect = text_surface.get_rect()
         text_rect.center = (x, y)
         self.display.blit(text_surface, text_rect)
