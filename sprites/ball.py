@@ -7,7 +7,6 @@ class Ball(pygame.sprite.Sprite):
     def __init__(self, initial_x=WIDTH / 2, initial_y=HEIGHT / 2):
         super().__init__()
         self.image = utils.load_image("resources/img/ball-1.png", True)
-        # self.image = pygame.transform.scale(self.image, (70, 70))
         self.original_image = self.image
         self.rect = self.image.get_rect()
         self.rect.centerx = initial_x
@@ -41,7 +40,7 @@ class Ball(pygame.sprite.Sprite):
 
         return scores
 
-    def update_in_menu(self, time, text_rects):
+    def update_in_menu(self, time, text_rects, ball=None):
         self.rect.centerx += self.speed[0] * time
         self.rect.centery += self.speed[1] * time
 
@@ -49,6 +48,15 @@ class Ball(pygame.sprite.Sprite):
             self.speed[0] = -self.speed[0]
         elif self.rect.top <= 0 or self.rect.bottom >= HEIGHT:
             self.speed[1] = -self.speed[1]
+
+        if self.rect.left < 0 or self.rect.top < 0:
+            self.rect.centerx = 35
+            self.rect.centery = 35
+
+        if ball:
+            if pygame.sprite.collide_rect(self, ball):
+                self.speed[0] = -self.speed[0]
+                self.speed[1] = -self.speed[1]
 
         for text_rect in text_rects:
             if self.rect.colliderect(text_rect):

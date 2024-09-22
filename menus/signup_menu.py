@@ -77,17 +77,43 @@ class SignUpMenu(Menu):
                 self.game.draw_text(self.error_message, 24, self.confirm_password_x, self.confirm_password_y + 55, RED)
             self.blit_screen()
 
+    def tab_options(self):
+        if self.name_input.is_focused:
+            self.name_input.unfocus()
+            self.username_input.focus()
+        elif self.username_input.is_focused:
+            self.username_input.unfocus()
+            self.password_input.focus()
+        elif self.password_input.is_focused:
+            self.password_input.unfocus()
+            self.confirm_password_input.focus()
+        elif self.confirm_password_input.is_focused:
+            self.confirm_password_input.unfocus()
+            self.submit_button.focus()
+        elif self.submit_button.is_focused:
+            self.submit_button.unfocus()
+            self.name_input.focus()
+
+    def reset_inputs(self):
+        self.name_input.set_text('')
+        self.username_input.set_text('')
+        self.password_input.set_text('')
+        self.confirm_password_input.set_text('')
+
     def check_input(self, event, time_delta):
         if self.game.ESCAPE_KEY:
+            self.reset_inputs()
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                self.validate_inputs()
+        if self.game.START_KEY:
+            self.validate_inputs()
         elif event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.submit_button:
                 self.validate_inputs()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_TAB:
+                self.tab_options()
         self.manager.update(time_delta)
         self.blit_screen()
 
@@ -113,8 +139,9 @@ class SignUpMenu(Menu):
             else:
                 if password == confirm_password:
                     create_user(name, username, password)
-                    print("Usuario creado")
+                    self.game.createdUser.user = username
                     self.game.curr_menu = self.game.createdUser
+                    self.reset_inputs()
                     self.run_display = False
                 else:
                     self.error_message = "*Las contraseñas no coinciden*"

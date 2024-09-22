@@ -55,17 +55,34 @@ class LoginMenu(Menu):
                 self.game.draw_text(self.error_message, 24, self.password_x, self.password_y + 55, RED)
             self.blit_screen()
 
+    def reset_inputs(self):
+        self.username_input.set_text('')
+        self.password_input.set_text('')
+
+    def tab_options(self):
+        if self.username_input.is_focused:
+            self.username_input.unfocus()
+            self.password_input.focus()
+        elif self.password_input.is_focused:
+            self.password_input.unfocus()
+            self.submit_button.focus()
+        elif self.submit_button.is_focused:
+            self.submit_button.unfocus()
+            self.username_input.focus()
+
     def check_input(self, event, time_delta):
         if self.game.ESCAPE_KEY:
+            self.reset_inputs()
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                self.validate_inputs()
+        if self.game.START_KEY:
+            self.validate_inputs()
         elif event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.submit_button:
                 self.validate_inputs()
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+            self.tab_options()
         self.manager.update(time_delta)
         self.blit_screen()
 
@@ -82,9 +99,12 @@ class LoginMenu(Menu):
             self.error_message = None
             if check_user(username):
                 if check_credentials(username, password):
+                    self.game.user_menu.get_user_data(username)
+                    self.game.curr_menu = self.game.user_menu
+                    self.reset_inputs()
+                    self.run_display = False
                     print("Credenciales correctas")
                 else:
                     self.error_message = "*contraseña incorrecta*"
             else:
                 self.error_message = "*Usuario inexistente*"
-

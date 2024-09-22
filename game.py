@@ -4,7 +4,9 @@ from menus.login_menu import LoginMenu
 from menus.main_menu import MainMenu
 from menus.ranking_menu import RankingMenu
 from menus.signup_menu import SignUpMenu
+from menus.user_menu import UserMenu
 from utils.utils import *
+import sys
 
 
 class Game:
@@ -16,6 +18,7 @@ class Game:
         self.font_name = "fonts/aesymatt.ttf"
         self.main_menu = MainMenu(self)
         self.login = LoginMenu(self)
+        self.user_menu = UserMenu(self)
         self.signUp = SignUpMenu(self)
         self.createdUser = CreatedUser(self)
         self.ranking = RankingMenu(self)
@@ -40,10 +43,12 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running, self.playing = False, False
                 self.curr_menu.run_display = False
+                pygame.font.quit()
                 pygame.quit()
+                sys.exit(0)
             else:
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                         self.START_KEY = True
                     if event.key == pygame.K_ESCAPE:
                         self.ESCAPE_KEY = True

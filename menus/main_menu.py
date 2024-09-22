@@ -31,7 +31,7 @@ class MainMenu(Menu):
             self.ball.update_in_menu(10, [main_text_rect, login_text_rect, signup_text_rect, ranking_text_rect,
                                           credits_text_rect])
             self.ball2.update_in_menu(10, [main_text_rect, login_text_rect, signup_text_rect, ranking_text_rect,
-                                           credits_text_rect])
+                                           credits_text_rect], self.ball)
             self.game.display.blit(self.ball.image, self.ball.rect)
             self.game.display.blit(self.ball2.image, self.ball2.rect)
             self.draw_cursor()
@@ -69,8 +69,10 @@ class MainMenu(Menu):
         self.move_cursor()
         if self.game.START_KEY:
             if self.state == LOGIN:
+                self.game.login.username_input.focus()
                 self.game.curr_menu = self.game.login
             elif self.state == SIGNUP:
+                self.game.signUp.name_input.focus()
                 self.game.curr_menu = self.game.signUp
             elif self.state == RANKING:
                 self.game.curr_menu = self.game.ranking

@@ -37,4 +37,3 @@ class Paddle(pygame.sprite.Sprite):
                 self.rect.centery -= self.speed * time
             else:
                 pass
-
