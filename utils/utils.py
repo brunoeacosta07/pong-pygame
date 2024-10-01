@@ -10,7 +10,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
-SPEED = 0.15
+SPEED = 0.12
 MENU_TEXT_SIZE = 55
 TITLE_TEXT_SIZE = 75
 OPTIONS_TEXT_POS = (WIDTH / 2) - 350
@@ -18,12 +18,17 @@ INPUT_POS_X = (WIDTH / 2) - 200
 # MAIN MENU
 LOGIN = 'LOGIN'
 SIGNUP = 'SIGNUP'
-RANKING = 'RANKING'
+REPORTS = 'REPORTS'
 CREDITS = 'CREDITS'
 # USER MENU
 NEW_GAME = 'NEW_GAME'
 LOAD_GAME = 'LOAD_GAME'
 LOGOUT = 'LOGOUT'
+# REPORTS MENU
+USER_REGS = 'USER_REGS'
+USER_QUERY = 'USER_QUERY'
+RANKING = 'RANKING'
+COLLISIONS = 'COLLISIONS'
 
 
 def init_pygame():
@@ -57,3 +62,10 @@ def open_csv(file_path):
         reader = csv.DictReader(f)
         rows = list(reader)
     return rows
+
+
+def write_csv(file_path, data):
+    with open(file_path, 'w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=data[0].keys())
+        writer.writeheader()
+        writer.writerows(data)

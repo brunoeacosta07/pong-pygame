@@ -2,7 +2,7 @@ import pygame
 
 
 class Text:
-    def __init__(self, font_name=None, font_size=30):
+    def __init__(self, font_name=None, font_size=40):
         pygame.font.init()
         self.font = pygame.font.Font(font_name, font_size)
         self.size = font_size

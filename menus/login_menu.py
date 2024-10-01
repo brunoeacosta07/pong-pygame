@@ -103,7 +103,6 @@ class LoginMenu(Menu):
                     self.game.curr_menu = self.game.user_menu
                     self.reset_inputs()
                     self.run_display = False
-                    print("Credenciales correctas")
                 else:
                     self.error_message = "*contraseña incorrecta*"
             else:

@@ -4,30 +4,31 @@ from utils.utils import *
 from collections import defaultdict
 
 
-def get_ranking_data():
-    users_data = defaultdict(lambda: {'points': 0, 'games': set()})
+def get_ranking_data(user_data):
+    users_data = defaultdict(lambda: {'point_a': 0, 'point_b': 0, 'total': set()})
     users = open_csv('resources/files/detalle-partida-jugador.csv')
-    user_master = open_csv('resources/files/maestro-usuarios.csv')
+    users = [user for user in users if user['codUsuario'] == user_data['codUsuario']]
     for user in users:
-        cod_user = user['codUsuario']
-        name = next((u['usuario'] for u in user_master if u['codUsuario'] == cod_user), 'Desconocido')
-        points = int(user['puntajeA'])
+        point_a = int(user['puntajeA'])
+        point_b = int(user['puntajeB'])
         match_num = user['numPartida']
-        users_data[name]['points'] += points
-        users_data[name]['games'].add(match_num)
+        users_data[match_num]['point_a'] = point_a
+        users_data[match_num]['point_b'] = point_b
+        users_data[match_num]['total'] = point_a - point_b
 
     ranking = [
-        (name, data['points'], len(data['games']))
-        for name, data in users_data.items()
+        (match_num, data['point_a'], data['point_b'], data['total'])
+        for match_num, data in users_data.items()
     ]
-    ranking.sort(key=lambda x: x[1], reverse=True)
+    ranking.sort(key=lambda x: x[3], reverse=True)
 
-    result = [f"{i + 1}.{name} ({puntaje} puntos en {partidas} partidas)"
-              for i, (name, puntaje, partidas) in enumerate(ranking)] if ranking else ["No hay partidas aun :("]
+    result = [f"{i + 1}. Partida: {match_num} | Puntos A: {puntaje_a} | Puntos B: {puntaje_b} | TOTAL: {total})"
+              for i, (match_num, puntaje_a, puntaje_b, total)
+              in enumerate(ranking)] if ranking else ["No hay partidas aun :("]
     return result
 
 
-class RankingMenu(Menu):
+class PersonalRanking(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
         self.manager = pygame_gui.UIManager((self.game.DISPLAY_W, self.game.DISPLAY_H), "themes/theme.json")
@@ -40,7 +41,7 @@ class RankingMenu(Menu):
         self.labels = []
 
     def update_rankings(self):
-        self.rankings = get_ranking_data()
+        self.rankings = get_ranking_data(self.game.user_menu.user)
 
         self.labels = []
         for i, ranking in enumerate(self.rankings):
@@ -60,12 +61,12 @@ class RankingMenu(Menu):
             self.game.check_events()
 
             self.game.display.fill(BLACK)
-            self.game.draw_title_text('Ranking', TITLE_TEXT_SIZE, self.game.DISPLAY_W / 2, 50)
+            self.game.draw_title_text('Ranking Personal', TITLE_TEXT_SIZE, self.game.DISPLAY_W / 2, 50)
             self.manager.draw_ui(self.game.display)
             self.blit_screen()
 
     def check_input(self, event, time_delta):
         if self.game.START_KEY or self.game.ESCAPE_KEY:
-            self.game.curr_menu = self.game.reports
+            self.game.curr_menu = self.game.user_menu
             self.run_display = False
         self.manager.update(time_delta)

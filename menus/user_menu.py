@@ -1,4 +1,6 @@
+from menus.load_match import LoadMatchMenu
 from menus.menu import Menu
+from menus.personal_ranking import PersonalRanking
 from utils.utils import *
 
 
@@ -13,6 +15,8 @@ class UserMenu(Menu):
         self.logout_x, self.logout_y = x_pos, menu_text_height(self.mid_h, 4)
         self.cursor_rect.midtop = (self.new_game_x + self.offset, self.new_game_y)
         self.user = None
+        self.loadMenu = LoadMatchMenu(game)
+        self.rankingMenu = PersonalRanking(game)
 
     def display_menu(self):
         self.run_display = True
@@ -62,11 +66,15 @@ class UserMenu(Menu):
         self.move_cursor()
         if self.game.START_KEY:
             if self.state == NEW_GAME:
-                self.game.curr_menu = self.game.login
+                self.game.curr_menu = self.game.main_menu
+                matches = open_csv('resources/files/acumulador-partidas.csv')
+                self.game.match_number = (int(matches[-1]['acumPartida']) + 1) if matches else 1
+                self.run_display = False
+                self.game.playing = True
             elif self.state == LOAD_GAME:
-                self.game.curr_menu = self.game.signUp
+                self.game.curr_menu = self.loadMenu
             elif self.state == RANKING:
-                self.game.curr_menu = self.game.ranking
+                self.game.curr_menu = self.rankingMenu
             elif self.state == LOGOUT:
                 self.game.curr_menu = self.game.main_menu
                 self.user = None

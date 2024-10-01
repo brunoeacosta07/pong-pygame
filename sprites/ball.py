@@ -4,7 +4,7 @@ from utils.utils import WIDTH, HEIGHT, SPEED
 
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, initial_x=WIDTH / 2, initial_y=HEIGHT / 2):
+    def __init__(self, number, initial_x=WIDTH / 2, initial_y=HEIGHT / 2):
         super().__init__()
         self.image = utils.load_image("resources/img/ball-1.png", True)
         self.original_image = self.image
@@ -13,22 +13,25 @@ class Ball(pygame.sprite.Sprite):
         self.rect.centery = initial_y
         self.speed = [SPEED, -SPEED]
         self.angle = 0
+        self.number = number
 
     def update(self, time, player_paddle, cpu_paddle, scores):
         self.rect.centerx += self.speed[0] * time
         self.rect.centery += self.speed[1] * time
 
         if self.rect.left <= 0:
-            scores[0] += 1
+            scores[1] += 1
             self.reset_position()
             self.speed = [-SPEED, SPEED]
         elif self.rect.right >= WIDTH:
-            scores[1] += 1
+            scores[0] += 1
             self.reset_position()
             self.speed = [SPEED, -SPEED]
 
-        if self.rect.top <= 0 or self.rect.bottom >= HEIGHT:
+        if self.rect.centery <= 30 or self.rect.centery >= HEIGHT-30:
             self.speed[1] = -self.speed[1]
+            if self.speed[1] == 0:
+                self.speed[1] = SPEED
 
         if pygame.sprite.collide_rect(self, player_paddle) or pygame.sprite.collide_rect(self, cpu_paddle):
             self.speed[0] = -self.speed[0]

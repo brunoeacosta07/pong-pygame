@@ -21,7 +21,7 @@ class CreatedUser(Menu):
     def check_input(self):
         if self.game.ESCAPE_KEY or self.game.START_KEY:
             self.game.curr_menu = self.game.main_menu
-            self.game.curr_menu.cursor_rect.midtop = (self.game.curr_menu.new_game_x + self.game.curr_menu.offset,
-                                                      self.game.curr_menu.new_game_y)
+            self.game.curr_menu.cursor_rect.midtop = (self.game.curr_menu.login_x + self.game.curr_menu.offset,
+                                                      self.game.curr_menu.login_y)
             self.game.curr_menu.state = LOGIN
             self.run_display = False

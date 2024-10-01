@@ -5,7 +5,6 @@ from utils.utils import *
 
 def create_user(name, username, password):
     users = open_csv('resources/files/maestro-usuarios.csv')
-    print(users)
     user_code = str(len(users) + 1).zfill(3)
     with open('resources/files/maestro-usuarios.csv', 'a', newline='') as f:
         writer = csv.writer(f)
