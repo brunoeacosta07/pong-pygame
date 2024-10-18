@@ -1,6 +1,7 @@
 from openai import OpenAI
 from transformers import pipeline
 from google.cloud import language_v1
+import google.generativeai as gemini
 
 
 def chat_gpt_completion():
@@ -25,7 +26,7 @@ def chat_gpt_completion():
 
 def huggingface_gpt_completion():
     #model: EleutherAI/gpt-neo-2.7B
-    generator = pipeline('text-generation', model='mrm8488/RuPERTa-base-finetuned-squadv2-es')
+    generator = pipeline('text-generation', model='gpt2')
 
     result = generator("¿Que es apache spark?", max_length=150, do_sample=True,
                        num_return_sequences=1)
@@ -50,6 +51,17 @@ def analyze_sentiment(text_to_analyse):
     print(f"Score: {sentiment.score}, Magnitude: {sentiment.magnitude}")
 
 
+def gemini_generative_text(player, cpu):
+    gemini.configure(api_key='AIzaSyCJY0k_toVwRUSoAWgi4pL3tRrxAY9v48c')
+    model = gemini.GenerativeModel('gemini-1.5-flash')
+    response = model.generate_content("Teniendo en cuenta la siguiente puntuacion y como si se siguiera jugando," +
+                                      " genera un muy breve texto de aliento o felicitaciones " +
+                                      "(sin incluir el puntaje en la respuesta), segun corresponda. " +
+                                      f"Jugador: {player}, cpu: {cpu}")
+    print(response.text)
+
+
 if __name__ == '__main__':
     text = "Google Cloud Natural Language API es muy útil para el análisis de texto."
-    analyze_sentiment(text)
+    # analyze_sentiment(text)
+    gemini_generative_text(40, 15)

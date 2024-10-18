@@ -65,45 +65,71 @@ class Game:
         self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.ESCAPE_KEY = False, False, False, False
         self.background_image = pygame.transform.scale(load_image('resources/img/background_tenis.png'),
                                                        (WIDTH, HEIGHT))
-        self.ball = Ball(1)
-        self.ball2 = Ball(2, initial_y=Random().randint(0, HEIGHT))
-        self.ball2.speed = [-self.ball2.speed[0], -self.ball2.speed[1]]
-        self.ball3 = Ball(3, initial_y=Random().randint(0, HEIGHT))
-        self.ball3.speed = [SPEED, SPEED]
+        self.balls = {
+            0: {0: Ball(1)},
+            1: {0: Ball(2, initial_y=Random().randint(0, HEIGHT))},
+            2: {0: Ball(3, initial_y=Random().randint(0, HEIGHT))}
+        }
+
+        self.balls[1][0].speed = [-self.balls[1][0].speed[0], -self.balls[1][0].speed[1]]
+        self.balls[2][0].speed = [SPEED, SPEED]
         self.player_paddle = Paddle(30)
         self.player_paddle.speed += 0.8
         self.cpu_paddle = Paddle(WIDTH - 30)
         self.cpu_paddle.speed += 0.2
-        self.cpu_paddle.target_ball = self.ball
+        self.cpu_paddle.target_ball = self.balls[0][0]
         self.text = Text(font_name=self.font_name)
         self.scores = [0, 0]
         self.collision_rect = [0, 0]
         self.match_number = 0
+        self.match_message = None
+        self.message_x = WIDTH
+        self.last_score = 0
 
-    def game_loop(self):
+    async def game_loop(self):
         while self.playing:
             self.check_events()
             time = self.clock.tick(60)
             keys = pygame.key.get_pressed()
-            self.ball.update(time, self.player_paddle, self.cpu_paddle, self.scores)
-            self.ball2.update(time + 1, self.player_paddle, self.cpu_paddle, self.scores)
-            self.ball3.update(time + 2, self.player_paddle, self.cpu_paddle, self.scores)
+            for i in range(len(self.balls)):
+                self.balls[i][0].update(time+1, self.player_paddle, self.cpu_paddle, self.scores)
             self.collide_balls()
             self.player_paddle.move(time, keys)
             self.cpu_paddle.ai(time)
-            self.cpu_paddle.update_target_ball([self.ball, self.ball2, self.ball3])
+            self.cpu_paddle.update_target_ball([self.balls[i][0] for i in range(len(self.balls))])
             self.build_collision_detail()
             self.window.blit(self.background_image, (0, 0))
             self.text.render(self.window, f"{self.user_menu.user['usuario'].upper()}: "
                                           f"{self.scores[0]}", WHITE, (20, 10))
             self.text.render(self.window, f"CPU: {self.scores[1]}", WHITE, (WIDTH - 150, 10))
-            self.window.blit(self.ball.image, self.ball.rect)
-            self.window.blit(self.ball2.image, self.ball2.rect)
-            self.window.blit(self.ball3.image, self.ball3.rect)
+            self.display_match_message(time)
+            for i in range(len(self.balls)):
+                self.window.blit(self.balls[i][0].image, self.balls[i][0].rect)
             self.window.blit(self.player_paddle.image, self.player_paddle.rect)
             self.window.blit(self.cpu_paddle.image, self.cpu_paddle.rect)
             pygame.display.flip()
             self.reset_keys()
+
+            if self.scores[0] % 10 == 0 and self.scores[0] != self.last_score:
+                print('entro a gemini')
+                self.last_score = self.scores[0]
+                asyncio.create_task(self.run_gemini_generative_text())
+            await asyncio.sleep(0)
+
+    async def run_gemini_generative_text(self):
+        player_score = self.scores[0]
+        cpu_score = self.scores[1]
+        print('iniciando gemini')
+        self.match_message = await gemini_generative_text(player_score, cpu_score)
+        print(self.match_message)
+
+    def display_match_message(self, time):
+        if self.match_message:
+            text_rect = self.text.blit_text(self.window,self.match_message, self.message_x, HEIGHT - 70)
+            self.message_x -= 0.1 * time
+            if text_rect.right < 0:
+                self.match_message = None
+                self.message_x = WIDTH
 
     def update_match_data(self):
         matches = open_csv('resources/files/acumulador-partidas.csv')
@@ -174,7 +200,7 @@ class Game:
         return text_rect
 
     def collide_balls(self):
-        balls = [self.ball, self.ball2, self.ball3]
+        balls = [self.balls[i][0] for i in range(len(self.balls))]
         for i in range(len(balls)):
             for j in range(i + 1, len(balls)):
                 if balls[i].rect.colliderect(balls[j].rect):
@@ -212,7 +238,7 @@ class Game:
             write_collision_detail([cod_user, self.match_number, date, collision, observation])
 
     def get_collision(self):
-        balls = [self.ball, self.ball2, self.ball3]
+        balls = [self.balls[i][0] for i in range(len(self.balls))]
         for i in range(len(balls)):
             if self.player_paddle.rect.colliderect(balls[i].rect) and balls[i].speed[0] > 0:
                 self.collision_rect = [balls[i].rect.centerx, balls[i].rect.centery]

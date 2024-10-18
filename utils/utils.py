@@ -1,7 +1,11 @@
+import concurrent.futures
+import os
 import csv
-
+import asyncio
 import pygame
+import random
 from pygame.locals import *
+import google.generativeai as gemini
 
 # Constants
 WIDTH = 1118
@@ -69,3 +73,47 @@ def write_csv(file_path, data):
         writer = csv.DictWriter(f, fieldnames=data[0].keys())
         writer.writeheader()
         writer.writerows(data)
+
+def generate_encouragement_message(player_score, cpu_score):
+    player_winning_messages = [
+        "¡Sigue así! Vas muy bien.",
+        "¡Excelente trabajo! Mantén el ritmo.",
+        "¡Estás en racha! No te detengas.",
+        "¡Impresionante! Sigue acumulando puntos."
+    ]
+
+    cpu_winning_messages = [
+        "¡Sigue intentando, no desistas!",
+        "¡No te rindas! Puedes darle la vuelta.",
+        "¡Ánimo! Todavía hay tiempo para ganar.",
+        "¡No te preocupes! La próxima será mejor."
+    ]
+
+    if player_score > cpu_score:
+        return random.choice(player_winning_messages)
+    else:
+        return random.choice(cpu_winning_messages)
+
+
+async def gemini_generative_text(player, cpu):
+    gemini.configure(api_key=os.getenv('GEMINI_API_KEY'))
+    model = gemini.GenerativeModel('gemini-1.5-flash')
+
+    loop = asyncio.get_event_loop()
+
+    with (concurrent.futures.ThreadPoolExecutor() as pool):
+
+        response = await loop.run_in_executor(
+            pool,
+            model.generate_content,
+            "Teniendo en cuenta la siguiente puntuacion y como si se siguiera jugando," +
+                                      " genera un muy breve texto de aliento o felicitaciones " +
+                                      "(sin incluir el puntaje en la respuesta), segun corresponda. " +
+                                      f"Jugador: {player}, cpu: {cpu}"
+        )
+    if response.candidates and response.candidates[0].finish_reason:
+        print(response)
+        return response.text
+    else:
+        print("Mensaje default")
+        return generate_encouragement_message(player, cpu)

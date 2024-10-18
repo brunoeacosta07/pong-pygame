@@ -1,3 +1,5 @@
+import asyncio
+
 from game import Game
 from utils.utils import *
 
@@ -12,9 +14,13 @@ def main():
     window = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Pong en Pygame")
     game = Game(display, window)
-    while game.running:
-        game.curr_menu.display_menu()
-        game.game_loop()
+
+    async def run_game():
+        while game.running:
+            game.curr_menu.display_menu()
+            await game.game_loop()
+
+    asyncio.run(run_game())
 
 
 if __name__ == '__main__':
