@@ -4,6 +4,9 @@ import csv
 import asyncio
 import pygame
 import random
+import requests
+from datetime import datetime
+import concurrent.futures
 from pygame.locals import *
 import google.generativeai as gemini
 
@@ -112,8 +115,34 @@ async def gemini_generative_text(player, cpu):
                                       f"Jugador: {player}, cpu: {cpu}"
         )
     if response.candidates and response.candidates[0].finish_reason:
-        print(response)
         return response.text
     else:
         print("Mensaje default")
         return generate_encouragement_message(player, cpu)
+
+
+async def update_game_info(game, playing):
+    url = 'https://game-status-back.onrender.com/game-info'
+    data = {
+        'matchNumber': game.match_number,
+        'player1': {
+            'name': game.user_menu.user['usuario'],
+            'points': game.scores[0]
+        },
+        'player2': {
+            'name': 'CPU',
+            'points': game.scores[1]
+        },
+        'playing': playing,
+        'matchDate': datetime.now().strftime('%Y-%m-%d')
+    }
+    loop = asyncio.get_event_loop()
+    with concurrent.futures.ThreadPoolExecutor() as pool:
+        response = await loop.run_in_executor(
+            pool,
+            lambda: requests.post(url, json=data)
+        )
+    if response.status_code == 201:
+        print("Informacion de la partida actualizada exitosamente")
+    else:
+        print("Error al actualizar la informacion de la partida")

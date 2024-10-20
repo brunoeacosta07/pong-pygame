@@ -88,11 +88,11 @@ class Game:
 
     async def game_loop(self):
         while self.playing:
-            self.check_events()
+            await self.check_events()
             time = self.clock.tick(60)
             keys = pygame.key.get_pressed()
             for i in range(len(self.balls)):
-                self.balls[i][0].update(time+1, self.player_paddle, self.cpu_paddle, self.scores)
+                await self.balls[i][0].update(time+1, self)
             self.collide_balls()
             self.player_paddle.move(time, keys)
             self.cpu_paddle.ai(time)
@@ -111,7 +111,6 @@ class Game:
             self.reset_keys()
 
             if self.scores[0] % 10 == 0 and self.scores[0] != self.last_score:
-                print('entro a gemini')
                 self.last_score = self.scores[0]
                 asyncio.create_task(self.run_gemini_generative_text())
             await asyncio.sleep(0)
@@ -141,11 +140,12 @@ class Game:
         else:
             update_match_statics(self.user_menu.user['codUsuario'], self.match_number, self.scores[0], self.scores[1])
 
-    def check_events(self):
+    async def check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 if self.playing:
                     self.update_match_data()
+                    await update_game_info(self, False)
                 self.running, self.playing = False, False
                 self.curr_menu.run_display = False
                 pygame.font.quit()

@@ -1,6 +1,10 @@
+import asyncio
 import pygame
 import utils.utils as utils
-from utils.utils import WIDTH, HEIGHT, SPEED
+from utils.utils import WIDTH, HEIGHT, SPEED, update_game_info
+
+
+
 
 
 class Ball(pygame.sprite.Sprite):
@@ -15,25 +19,27 @@ class Ball(pygame.sprite.Sprite):
         self.angle = 0
         self.number = number
 
-    def update(self, time, player_paddle, cpu_paddle, scores):
+    async def update(self, time, game):
         self.rect.centerx += self.speed[0] * time
         self.rect.centery += self.speed[1] * time
 
         if self.rect.left <= 0:
-            scores[1] += 1
+            game.scores[1] += 1
             self.reset_position()
             self.speed = [-SPEED, SPEED]
+            asyncio.create_task(update_game_info(game, True))
         elif self.rect.right >= WIDTH:
-            scores[0] += 1
+            game.scores[0] += 1
             self.reset_position()
             self.speed = [SPEED, -SPEED]
+            asyncio.create_task(update_game_info(game, True))
 
         if self.rect.centery <= 30 or self.rect.centery >= HEIGHT-30:
             self.speed[1] = -self.speed[1]
             if self.speed[1] == 0:
                 self.speed[1] = SPEED
 
-        if pygame.sprite.collide_rect(self, player_paddle) or pygame.sprite.collide_rect(self, cpu_paddle):
+        if pygame.sprite.collide_rect(self, game.player_paddle) or pygame.sprite.collide_rect(self, game.cpu_paddle):
             self.speed[0] = -self.speed[0]
 
         self.angle += 3
@@ -41,7 +47,7 @@ class Ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=self.rect.center)
         self.rect.move_ip(self.speed[0] * time, self.speed[1] * time)
 
-        return scores
+        return game.scores
 
     def update_in_menu(self, time, text_rects, ball=None):
         self.rect.centerx += self.speed[0] * time

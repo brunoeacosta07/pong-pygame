@@ -17,7 +17,7 @@ def main():
 
     async def run_game():
         while game.running:
-            game.curr_menu.display_menu()
+            await game.curr_menu.display_menu()
             await game.game_loop()
 
     asyncio.run(run_game())

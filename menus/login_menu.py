@@ -40,11 +40,11 @@ class LoginMenu(Menu):
         )
         self.error_message = None
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
 
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
             self.game.display.fill(BLACK)
             self.game.draw_title_text('Login', TITLE_TEXT_SIZE+30, self.mid_w, self.mid_h / 3)
             self.game.draw_text('Usuario:', MENU_TEXT_SIZE - 20, self.username_x - 135, self.username_y)

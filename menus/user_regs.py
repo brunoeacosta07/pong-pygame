@@ -55,11 +55,11 @@ class UserRegs(Menu):
                 object_id=f'#clave_{i}',
             ))
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
         self.update_panel()
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
 
             self.game.display.fill(BLACK)
             self.game.draw_title_text('Registro de usuarios', TITLE_TEXT_SIZE, self.game.DISPLAY_W / 2, 50)

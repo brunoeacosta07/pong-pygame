@@ -54,7 +54,7 @@ class LoadMatchMenu(Menu):
     def update_match_detail(self, selected_match):
         self.match_detail = get_match_details(self.matches, selected_match)
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
         self.matches = get_matches(self.game.user_menu.user)
         if self.matches and len(self.matches) > 0:
@@ -78,7 +78,7 @@ class LoadMatchMenu(Menu):
             self.error_message = '*No existen partidas para este usuario*'
 
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
             self.game.display.fill(BLACK)
             self.game.draw_title_text(f"Cargar partida ({self.game.user_menu.user['usuario']})", TITLE_TEXT_SIZE,
                                       self.game.DISPLAY_W / 2, 50)

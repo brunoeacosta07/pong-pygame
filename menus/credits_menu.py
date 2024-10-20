@@ -6,10 +6,10 @@ class CreditsMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
             if self.game.START_KEY or self.game.ESCAPE_KEY:
                 self.game.curr_menu = self.game.main_menu
                 self.run_display = False

@@ -68,10 +68,10 @@ class UserQuery(Menu):
             object_id='#match_dropdown'
         )
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
             self.game.display.fill(BLACK)
             self.game.draw_title_text('Consulta por usuario', TITLE_TEXT_SIZE, self.game.DISPLAY_W / 2, 50)
             self.game.draw_text('Usuario:', MENU_TEXT_SIZE - 20, self.user_dropdown_x, self.user_dropdown_y - 40)

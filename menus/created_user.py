@@ -7,11 +7,11 @@ class CreatedUser(Menu):
         Menu.__init__(self, game)
         self.user = None
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
 
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
             self.game.display.fill(BLACK)
             self.game.draw_success_text(f'Usuario {self.user}\ncreado con exito!',
                                         TITLE_TEXT_SIZE + 50, self.mid_w, self.mid_h)

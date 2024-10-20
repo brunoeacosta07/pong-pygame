@@ -20,10 +20,10 @@ class ReportsMenu(Menu):
         self.ranking = RankingMenu(game)
         self.collisions = CollisionsMenu(game)
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
             self.check_input()
             self.game.display.fill(BLACK)
             self.game.draw_title_text('Informes Generales', TITLE_TEXT_SIZE, self.mid_w, self.mid_h / 2)

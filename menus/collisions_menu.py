@@ -129,11 +129,11 @@ class CollisionsMenu(Menu):
                 object_id=f'#colision_{i}',
             ))
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
         while self.run_display:
             self.game.display.fill(BLACK)
-            self.game.check_events()
+            await self.game.check_events()
             self.game.draw_title_text('Detalle de colisiones', TITLE_TEXT_SIZE, self.game.DISPLAY_W / 2, 50)
             self.game.draw_text('Usuario:', MENU_TEXT_SIZE - 20, self.user_dropdown_x, self.user_dropdown_y - 40)
             self.game.draw_text('Partida:', MENU_TEXT_SIZE - 20, self.match_dropdown_x, self.match_dropdown_y - 40)

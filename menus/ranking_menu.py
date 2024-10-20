@@ -53,11 +53,11 @@ class RankingMenu(Menu):
             )
             self.labels.append(label)
 
-    def display_menu(self):
+    async def display_menu(self):
         self.update_rankings()
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
 
             self.game.display.fill(BLACK)
             self.game.draw_title_text('Ranking', TITLE_TEXT_SIZE, self.game.DISPLAY_W / 2, 50)

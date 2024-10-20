@@ -18,10 +18,10 @@ class UserMenu(Menu):
         self.loadMenu = LoadMatchMenu(game)
         self.rankingMenu = PersonalRanking(game)
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
             self.check_input()
             self.game.display.fill(BLACK)
             if self.user:

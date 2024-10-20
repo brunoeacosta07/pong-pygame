@@ -17,10 +17,10 @@ class MainMenu(Menu):
         self.ball.set_speed(0.1)
         self.ball2.set_speed(0.1)
 
-    def display_menu(self):
+    async def display_menu(self):
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            await self.game.check_events()
             self.check_input()
             self.game.display.fill(BLACK)
             main_text_rect = self.game.draw_title_text('Pong en Pygame', TITLE_TEXT_SIZE, self.mid_w, self.mid_h / 2)
